@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Thanh toán - Cửa hàng Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="mb-4">✅ THANH TOÁN</h2>
+
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">📝 THÔNG TIN ĐẶT HÀNG</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">👤 Họ tên *</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên đầy đủ" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">📞 Số điện thoại *</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" pattern="[0-9]{10,11}" placeholder="VD: 0123456789" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">📍 Địa chỉ giao hàng *</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" placeholder="Nhập địa chỉ chi tiết" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        ✅ XÁC NHẬN ĐẶT HÀNG
+                    </button>
+                    <a href="{% url 'cart' %}" class="btn btn-outline-secondary btn-lg w-100 mt-2">
+                        ← Quay lại giỏ
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <h5 class="mb-3">📦 CHI TIẾT ĐƠN HÀNG</h5>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for item in cart_items %}
+                        <div class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <strong>{{ item.product.name }}</strong>
+                                <br>
+                                <small class="text-muted">x{{ item.quantity }}</small>
+                            </div>
+                            <span class="fw-bold">{{ item.subtotal|floatformat:0 }} đ</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>💰 Tạm tính:</span>
+                    <span>{{ total_price|floatformat:0 }} đ</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>🚚 Vận chuyển:</span>
+                    <span class="text-success">MIỄN PHÍ</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>🎁 Giảm giá:</span>
+                    <span class="text-info">0 đ</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between fs-5 fw-bold">
+                    <span>💳 TỔNG CỘNG:</span>
+                    <span class="text-success">{{ total_price|floatformat:0 }} đ</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title">📞 CẦN HỖ TRỢ?</h6>
+                <p class="small mb-0">
+                    Liên hệ với chúng tôi:<br>
+                    <strong>🔔 Hotline:</strong> 1900-1111<br>
+                    <strong>📧 Email:</strong> support@vanphongpham.vn
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

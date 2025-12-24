@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Lịch Sử Chuyển Động Hàng - Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📋 Lịch Sử Chuyển Động Hàng Hóa</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Loại Chuyển Động</label>
+                    <select name="type" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        {% for value, label in movement_types %}
+                            <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kho Hàng</label>
+                    <select name="warehouse" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        {% for warehouse in warehouses %}
+                            <option value="{{ warehouse.id }}" {% if selected_warehouse == warehouse.id|stringformat:"s" %}selected{% endif %}>
+                                {{ warehouse.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Lọc
+                    </button>
+                    <a href="{% url 'stock_movement_log' %}" class="btn btn-secondary">
+                        Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if movements %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Loại Chuyển Động</th>
+                        <th>Sản Phẩm</th>
+                        <th>Kho</th>
+                        <th>Số Lượng</th>
+                        <th>Tham Chiếu</th>
+                        <th>Người Thực Hiện</th>
+                        <th>Ngày Tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movement in movements %}
+                        <tr>
+                            <td>
+                                {% if movement.movement_type == 'import' %}
+                                    <span class="badge bg-success">Nhập hàng</span>
+                                {% elif movement.movement_type == 'export' %}
+                                    <span class="badge bg-danger">Xuất hàng</span>
+                                {% elif movement.movement_type == 'transfer' %}
+                                    <span class="badge bg-info">Chuyển kho</span>
+                                {% elif movement.movement_type == 'adjust' %}
+                                    <span class="badge bg-warning">Điều chỉnh</span>
+                                {% elif movement.movement_type == 'sale' %}
+                                    <span class="badge bg-primary">Bán hàng</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ movement.warehouse_stock.product.name }}</td>
+                            <td>{{ movement.warehouse_stock.warehouse.name }}</td>
+                            <td class="fw-bold">{{ movement.quantity }}</td>
+                            <td><code>{{ movement.reference|default:"N/A" }}</code></td>
+                            <td>{{ movement.created_by.username|default:"Hệ thống" }}</td>
+                            <td>{{ movement.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> Không có dữ liệu chuyển động hàng.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

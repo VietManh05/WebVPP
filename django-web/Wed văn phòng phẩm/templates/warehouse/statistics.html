@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Thống Kê Kho Hàng - Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Thống Kê Kho Hàng</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Tổng Kho</h6>
+                    <h3>{{ total_warehouses }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Sức Chứa Tổng</h6>
+                    <h3>{{ total_capacity }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Hàng Đang Dùng</h6>
+                    <h3>{{ total_items }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Tổng Sản Phẩm</h6>
+                    <h3>{{ total_products }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-3">📈 Chi Tiết Kho Hàng</h3>
+
+    {% if warehouse_data %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kho Hàng</th>
+                        <th>Địa Điểm</th>
+                        <th>Sức Chứa</th>
+                        <th>Đang Sử Dụng</th>
+                        <th>Còn Trống</th>
+                        <th>Mức Sử Dụng</th>
+                        <th>Trạng Thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in warehouse_data %}
+                        <tr>
+                            <td><strong>{{ data.warehouse.name }}</strong></td>
+                            <td>{{ data.warehouse.location }}</td>
+                            <td>{{ data.capacity }}</td>
+                            <td class="fw-bold">{{ data.total_items }}</td>
+                            <td>{{ data.available }}</td>
+                            <td>
+                                <div class="progress" style="height: 24px;">
+                                    {% if data.percent >= 90 %}
+                                        <div class="progress-bar bg-danger" style="width: {{ data.percent|floatformat:0 }}%">
+                                            {{ data.percent|floatformat:0 }}%
+                                        </div>
+                                    {% elif data.percent >= 70 %}
+                                        <div class="progress-bar bg-warning" style="width: {{ data.percent|floatformat:0 }}%">
+                                            {{ data.percent|floatformat:0 }}%
+                                        </div>
+                                    {% else %}
+                                        <div class="progress-bar bg-success" style="width: {{ data.percent|floatformat:0 }}%">
+                                            {{ data.percent|floatformat:0 }}%
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if data.percent >= 90 %}
+                                    <span class="badge bg-danger">Đầy</span>
+                                {% elif data.percent >= 70 %}
+                                    <span class="badge bg-warning">Cảnh báo</span>
+                                {% else %}
+                                    <span class="badge bg-success">Bình thường</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'warehouse_list' %}" class="btn btn-primary">
+            <i class="fas fa-warehouse"></i> Xem Danh Sách Kho
+        </a>
+        <a href="{% url 'stock_movement_log' %}" class="btn btn-info">
+            <i class="fas fa-exchange-alt"></i> Lịch Sử Chuyển Động
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Danh Sách Kho Hàng - Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>📦 Danh Sách Kho Hàng</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'warehouse_statistics' %}" class="btn btn-info">
+                <i class="fas fa-chart-bar"></i> Thống kê
+            </a>
+            <a href="{% url 'stock_movement_log' %}" class="btn btn-warning">
+                <i class="fas fa-exchange-alt"></i> Chuyển động hàng
+            </a>
+        </div>
+    </div>
+
+    {% if warehouses %}
+        <div class="row">
+            {% for warehouse in warehouses %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-warehouse"></i> {{ warehouse.name }}
+                            </h5>
+                            <p class="card-text text-muted">{{ warehouse.location }}</p>
+                            
+                            {% with total=warehouse.total_items capacity=warehouse.capacity %}
+                                {% if capacity > 0 %}
+                                    {% widthratio total capacity 100 as percent %}
+                                    <div class="mb-3">
+                                        <small class="text-muted">Sức chứa: {{ total }}/{{ capacity }}</small>
+                                        <div class="progress" style="height: 8px;">
+                                            {% if percent >= 90 %}
+                                                <div class="progress-bar bg-danger" style="width: {{ percent }}%"></div>
+                                            {% elif percent >= 70 %}
+                                                <div class="progress-bar bg-warning" style="width: {{ percent }}%"></div>
+                                            {% else %}
+                                                <div class="progress-bar bg-success" style="width: {{ percent }}%"></div>
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">{{ percent }}%</small>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            
+                            {% if warehouse.manager_name %}
+                                <p class="mb-2">
+                                    <strong>Quản lý:</strong> {{ warehouse.manager_name }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if warehouse.phone %}
+                                <p class="mb-3">
+                                    <strong>Điện thoại:</strong> {{ warehouse.phone }}
+                                </p>
+                            {% endif %}
+                            
+                            <a href="{% url 'warehouse_detail' warehouse.id %}" class="btn btn-sm btn-primary w-100">
+                                <i class="fas fa-eye"></i> Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> Chưa có kho hàng nào được kích hoạt.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Trang chủ - Cửa hàng Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <h5 class="mb-3">📂 DANH MỤC</h5>
+        <div class="list-group">
+            <a href="{% url 'home' %}" class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                ✓ Tất cả sản phẩm
+            </a>
+            {% for category in categories %}
+                <a href="?category={{ category.id }}" class="list-group-item list-group-item-action {% if selected_category|add:'0'|stringformat:'d' == category.id|stringformat:'d' %}active{% endif %}">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h3 class="mb-4">
+            {% if selected_category %}
+                📦 SẢN PHẨM
+            {% else %}
+                📦 TẤT CẢ SẢN PHẨM
+            {% endif %}
+        </h3>
+
+        {% if products %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for product in products %}
+                    <div class="col">
+                        <div class="card product-card h-100">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top product-image">
+                            {% else %}
+                                <div class="product-image d-flex align-items-center justify-content-center">
+                                    <span class="text-muted">Chưa có ảnh</span>
+                                </div>
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text text-muted small">{{ product.description|truncatewords:10 }}</p>
+                                <p class="card-text mb-3">
+                                    <strong class="text-primary fs-5">{{ product.price|floatformat:0 }} đ</strong>
+                                </p>
+                                <div class="mt-auto">
+                                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                        👁 Chi tiết
+                                    </a>
+                                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success btn-sm btn-add-cart">
+                                        🛒 Thêm giỏ
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">Không có sản phẩm</h4>
+                <p>Danh mục này chưa có sản phẩm nào. Vui lòng quay lại sau hoặc chọn danh mục khác.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ warehouse.name }} - Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="mb-4">
+        <a href="{% url 'warehouse_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>🏭 {{ warehouse.name }}</h2>
+            <p class="text-muted">{{ warehouse.location }}</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Quản lý</h6>
+                    <p class="card-text">{{ warehouse.manager_name|default:"Chưa cập nhật" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Điện thoại</h6>
+                    <p class="card-text">{{ warehouse.phone|default:"Chưa cập nhật" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Sức chứa</h6>
+                    <p class="card-text">{{ warehouse.capacity }} đơn vị</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Đang sử dụng</h6>
+                    <p class="card-text">{{ warehouse.total_items }} đơn vị</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-3">📊 Hàng Hóa Trong Kho</h3>
+    
+    {% if warehouse_stocks %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sản Phẩm</th>
+                        <th>Mã SKU</th>
+                        <th>Số Lượng</th>
+                        <th>Giá</th>
+                        <th>Lần Kiểm Kê</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in warehouse_stocks %}
+                        <tr>
+                            <td>{{ stock.product.name }}</td>
+                            <td><code>{{ stock.product.sku|default:"N/A" }}</code></td>
+                            <td>
+                                {% if stock.quantity <= 0 %}
+                                    <span class="badge bg-danger">{{ stock.quantity }}</span>
+                                {% elif stock.quantity <= 10 %}
+                                    <span class="badge bg-warning">{{ stock.quantity }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ stock.quantity }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="fw-bold text-primary">{{ stock.product.price|floatformat:0 }} ₫</td>
+                            <td>{{ stock.last_counted|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <a href="{% url 'product_availability' stock.product.id %}" class="btn btn-sm btn-info">
+                                    Xem kho khác
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-circle"></i> Kho này chưa có hàng hóa nào.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

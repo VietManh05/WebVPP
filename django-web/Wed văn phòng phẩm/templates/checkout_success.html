@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Đặt hàng thành công - Cửa hàng Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div style="font-size: 80px; margin-bottom: 20px;">
+            ✅
+        </div>
+
+        <h2 class="mb-3 text-success">🎉 ĐẶT HÀNG THÀNH CÔNG!</h2>
+
+        <div class="alert alert-success" role="alert">
+            <p class="mb-0">
+                <strong>Cảm ơn bạn!</strong> Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận và giao hàng.
+            </p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">📝 THÔNG TIN ĐƠN HÀNG</h5>
+                <p class="text-muted">
+                    Một email xác nhận đã được gửi đến địa chỉ email của bạn.<br>
+                    Vui lòng kiểm tra email hoặc liên hệ hỗ trợ để biết chi tiết.
+                </p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">📞 LIÊN HỆ HỖ TRỢ</h5>
+                <p class="mb-2">
+                    <strong>🔔 Hotline:</strong> 1900-1111<br>
+                    <strong>📧 Email:</strong> support@vanphongpham.vn<br>
+                    <strong>⏰ Giờ làm:</strong> 8:00 - 22:00 (hàng ngày)
+                </p>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+                🏠 QUAY LẠI TRANG CHỦ
+            </a>
+            <a href="/admin/" class="btn btn-outline-secondary btn-lg">
+                📊 QUẢN TRỊ ĐƠN HÀNG
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

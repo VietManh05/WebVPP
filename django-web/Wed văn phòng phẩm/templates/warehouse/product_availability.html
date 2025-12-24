@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Tồn Kho - {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="mb-4">
+        <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại sản phẩm
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>📦 Tồn Kho: {{ product.name }}</h2>
+            <p class="text-muted">Mã: <code>{{ product.sku|default:"N/A" }}</code></p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Tồn Kho Chính</h6>
+                    <h3>{{ product.stock }}</h3>
+                    <small>Đơn vị</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Tồn Kho Phân Nhánh</h6>
+                    <h3>{{ total_warehouse_stock }}</h3>
+                    <small>Đơn vị</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Tồn Kho Tổng</h6>
+                    <h3>{{ total_stock }}</h3>
+                    <small>Đơn vị</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-3">🏭 Phân Bổ Theo Kho</h3>
+
+    {% if warehouse_stocks %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kho Hàng</th>
+                        <th>Địa Điểm</th>
+                        <th>Số Lượng</th>
+                        <th>Lần Kiểm Kê</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in warehouse_stocks %}
+                        <tr>
+                            <td><strong>{{ stock.warehouse.name }}</strong></td>
+                            <td>{{ stock.warehouse.location }}</td>
+                            <td>
+                                {% if stock.quantity <= 0 %}
+                                    <span class="badge bg-danger">{{ stock.quantity }}</span>
+                                {% elif stock.quantity <= 10 %}
+                                    <span class="badge bg-warning">{{ stock.quantity }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ stock.quantity }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ stock.last_counted|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <a href="{% url 'warehouse_detail' stock.warehouse.id %}" class="btn btn-sm btn-info">
+                                    Xem kho
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            <i class="fas fa-exclamation-circle"></i> Sản phẩm này chưa được phân bổ vào bất kỳ kho nào.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

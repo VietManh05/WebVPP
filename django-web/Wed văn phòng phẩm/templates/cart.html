@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Giỏ hàng - Cửa hàng Văn Phòng Phẩm{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🛒 GIỎ HÀNG</h2>
+
+{% if cart_items %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>📦 Sản phẩm</th>
+                            <th>💰 Giá</th>
+                            <th>📊 Số lượng</th>
+                            <th>💵 Thành tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'product_detail' item.product.id %}" class="text-decoration-none">
+                                        {{ item.product.name }}
+                                    </a>
+                                </td>
+                                <td>{{ item.product.price|floatformat:0 }} đ</td>
+                                <td>
+                                    <form method="POST" action="{% url 'update_cart' item.product.id %}" class="d-flex">
+                                        {% csrf_token %}
+                                        <div class="input-group" style="width: 120px;">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="999" class="form-control">
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">Cập nhật</button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td class="text-end fw-bold">{{ item.subtotal|floatformat:0 }} đ</td>
+                                <td>
+                                    <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-sm btn-danger">
+                                        🗑 Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">📋 TÓM TẮT ĐƠN HÀNG</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>💰 Tổng cộng:</span>
+                        <span class="fw-bold text-success">{{ total_price|floatformat:0 }} đ</span>
+                    </div>
+                    <p class="text-muted small">*Chưa bao gồm phí vận chuyển</p>
+                    <hr>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary w-100 mb-2">
+                        ← Tiếp tục mua
+                    </a>
+                    <a href="{% url 'checkout' %}" class="btn btn-success w-100">
+                        ✅ Thanh toán
+                    </a>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">💡 LỢI ỊCH MUA HÀNG</h6>
+                    <ul class="list-unstyled small">
+                        <li>✅ Giao hàng toàn quốc</li>
+                        <li>✅ Hỗ trợ 24/7</li>
+                        <li>✅ Hoàn tiền 100%</li>
+                        <li>✅ Bảo hành sản phẩm</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">⚠️ Giỏ hàng trống</h4>
+        <p>Bạn chưa có sản phẩm nào trong giỏ hàng. Hãy thêm sản phẩm để tiếp tục.</p>
+        <hr>
+        <a href="{% url 'home' %}" class="btn btn-primary">
+            ← Quay lại trang chủ
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
